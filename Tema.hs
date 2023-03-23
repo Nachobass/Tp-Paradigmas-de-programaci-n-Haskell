@@ -38,25 +38,56 @@ etiquetasT (Tem _ etiquetast _) = etiquetast
 
 
 agregarT :: Etiqueta -> Tema -> Tema
-agregarT e (Tem n _ d) = Tem n [e] d
+agregarT e (Tem n et d) = Tem n (e:et) d
 
   {-
+  primero-----agregarT e (Tem n _ d) = Tem n [e] d
+
       Así funciona:
           ghci> agregarT "Etiquet" (Tem  "me" []  "hola")
           Tem "me" ["Etiquet"] "hola"
+      
+      PRUEBA FINAL:
+          ghci> t1 = nuevoT "n1" "d1"
+          ghci> t2 = nuevoT "n2" "d2"
+          ghci> agregarT "e2" (agregarT "e1" t1)
+          Tem "n1" ["e2","e1"] "d1"
+          ghci> t3 = agregarT "e2" t2
+          ghci> t4 = agregarT "e3" t3
+          ghci> t4
+          Tem "n2" ["e3","e2"] "d2"
     -}
 
 
 aplicaT :: Etiqueta -> Tema -> Bool
-aplicaT et (Tem n [e] d) | [et] == etiquetasT (Tem n [e] d) = True
-                       | otherwise = False
+aplicaT e (Tem n et d) = elem e (etiquetasT (Tem n et d))
 
   {-
+      PRIMER VERSION:
+        aplicaT et (Tem n [e] d) | [et] == etiquetasT (Tem n [e] d) = True
+                       | otherwise = False
+
       Así funciona:
           ghci> aplicaT "hola" (Tem  "me" ["eti"]  "hola")
           False
           ghci> aplicaT "hola" (Tem  "me" ["hola"]  "hola")
           True
+      
+      PRUEBA FINAL:
+          ghci> t1 = nuevoT "n1" "d1"
+          ghci> t2 = nuevoT "n2" "d2"
+          ghci> t3 = agregarT "e2" t2
+          ghci> t4 = agregarT "e3" t3
+          ghci> t4
+          Tem "n2" ["e3","e2"] "d2"
+          ghci> aplicaT "e1" t4
+          False
+          ghci> aplicaT "e2" t4
+          True
+          ghci> aplicaT "e3" t4
+          True
+          ghci> aplicaT "e5" t4
+          False
     -}
 
 
